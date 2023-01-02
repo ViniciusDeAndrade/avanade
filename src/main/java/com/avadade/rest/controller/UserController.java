@@ -6,7 +6,9 @@ import com.avadade.rest.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -27,10 +29,12 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserForm user) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserForm user, UriComponentsBuilder uriBuilder) {
         UserDTO userDto = userService.createUser(user);
 
-        return ResponseEntity.ok(userDto);
+        URI uri = uriBuilder.path("v1/user/{id}").buildAndExpand(userDto.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(userDto);
     }
 
 }
